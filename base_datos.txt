@@ -1,0 +1,84 @@
+use Hotel_Luxury
+
+Create table CATEGORIA(
+    IdCategoria INT PRIMARY KEY IDENTITY,
+    Descripcion VARCHAR(50),
+    Estado BIT DEFAULT 1,
+    FechaCreacion DATETIME DEFAULT GETDATE()
+);
+
+Create table HABITACION (
+    IdHabitacion INT PRIMARY KEY IDENTITY,
+    Numero VARCHAR(50),
+    Precio DECIMAL(10, 2),
+    IdCategoria INT,
+    Estado BIT DEFAULT 1,
+    IdCateHaitacion Int References CATEGORIA(IdCategoria)
+);
+
+Create table PROVEEDOR (
+    ProveedorId INT PRIMARY KEY IDENTITY,
+    Nombre VARCHAR(100) NOT NULL,
+    Direccion VARCHAR(255),
+    Telefono VARCHAR(20),
+    NIT INT,
+    Correo VARCHAR(100)
+);
+
+Create table PRODUCTO (
+    IdProducto INT PRIMARY KEY IDENTITY,
+    Nombre VARCHAR(50),
+    Precio DECIMAL(10, 2),
+    Cantidad INT,
+    ProveedorId INT References PROVEEDOR(ProveedorId)
+);
+
+Create table TIPO_USUARIO (
+    IdTipoUsuario INT PRIMARY KEY IDENTITY,
+    Descripcion VARCHAR(50),
+    FechaCreacion DATETIME DEFAULT GETDATE()
+);
+
+Create table USUARIO (
+    IdUsuario INT PRIMARY KEY IDENTITY,
+    TipoDocumento_usuario VARCHAR(15),
+    Documento VARCHAR(15),
+    Nombre_usuario VARCHAR(50),
+    Apellido_usuario VARCHAR(50),
+    Correo VARCHAR(50),
+    Clave VARCHAR(50),
+    IdTipoUsuario INT,
+    FechaCreacion DATETIME DEFAULT GETDATE(),
+    IdTipoUsua INT References TIPO_USUARIO(IdTipoUsuario)
+);
+
+create table RECEPCION (
+    IdRecepcion INT PRIMARY KEY IDENTITY,
+    FechaEntrada DATETIME DEFAULT GETDATE(),
+    FechaSalida DATETIME,
+    FechaSalidaConfirmacion DATETIME,
+    PrecioInicial DECIMAL(10, 2),
+    Adelanto DECIMAL(10, 2),
+    PrecioRestante DECIMAL(10, 2),
+    TotalPagado DECIMAL(10, 2) DEFAULT 0,
+    CostoPenalidad DECIMAL(10, 2) DEFAULT 0,
+    Observacion VARCHAR(500),
+    IdCliente int references USUARIO(IdUsuario),
+    IdHabitacion int References HABITACION(IdHabitacion)
+);
+
+create table VENTA (
+    IdVenta INT PRIMARY KEY IDENTITY,
+    IdRecepcion INT,
+    Total DECIMAL(10, 2),
+    Estado VARCHAR(50),
+    IdRecep int references RECEPCION(IdRecepcion)
+);
+
+create table DETALLE_VENTA(
+    IdNumeroVenta INT PRIMARY KEY IDENTITY,
+    Cantidad INT,
+    SubTotal DECIMAL(10, 2),
+    IdVenta int references VENTA(IdVenta),
+    IdProducto int REFERENCES PRODUCTO(IdProducto)
+);
